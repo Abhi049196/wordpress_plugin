@@ -1,0 +1,37 @@
+// Add Instagram link field to product
+function igwpl_product_instagram_link_field() {
+    woocommerce_wp_text_input( array(
+        'id' => '_instagram_link',
+        'label' => 'Instagram Link',
+        'placeholder' => 'Enter Instagram Link',
+        'desc_tip' => 'true',
+        'description' => 'Enter the Instagram Link for this product',
+        'type' => 'text',
+        'required' => 'true'
+    ) );
+}
+add_action( 'woocommerce_product_options_general_product_data', 'igwpl_product_instagram_link_field' );
+
+// Save Instagram link field
+function igwpl_save_product_instagram_link_field( $post_id ) {
+    $instagram_link = $_POST['_instagram_link'];
+    if ( ! empty( $instagram_link ) ) {
+        update_post_meta( $post_id, '_instagram_link', esc_attr( $instagram_link ) );
+    } else {
+        delete_post_meta( $post_id, '_instagram_link' );
+    }
+}
+add_action( 'woocommerce_process_product_meta', 'igwpl_save_product_instagram_link_field' );
+
+
+// Display Instagram link on product page
+function igwpl_display_product_instagram_link() {
+    global $product;
+    $instagram_link = get_post_meta( $product->get_id(), '_instagram_link', true );
+    if ( ! empty( $instagram_link ) ) {
+        echo '<div class="product-instagram-link">';
+        echo '<strong>Follow us on Instagram:</strong> <a href="' . esc_url( $instagram_link ) . '" target="_blank">' . esc_url( $instagram_link ) . '</a>';
+        echo '</div>';
+    }
+}
+add_action( 'woocommerce_single_product_summary', 'igwpl_display_product_instagram_link', 25 );
